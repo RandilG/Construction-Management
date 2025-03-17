@@ -1,192 +1,101 @@
 import React from 'react';
-import { StyleSheet, Text, View, TouchableOpacity, Image } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import { StyleSheet, Text, View, TouchableOpacity, Image, Alert } from 'react-native';
+import { useNavigation, useRoute } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/Ionicons';
 
-function BuyTicketsButton() {
+const Eventdetails = ({ route }) => {
     const navigation = useNavigation();
+    const { stage, setUpcommingStages } = route.params; // Get stage details from navigation
 
-    function gotoselecttickets() {
-        navigation.navigate('Selecttickets');
+    function goBack() {
+        navigation.goBack();
     }
 
-    return (
-        <TouchableOpacity onPress={gotoselecttickets}>
-            <View style={styles.buyTicketsButton}>
-                <Text style={styles.buyTicketsButtonText}>
-                    Buy Tickets
-                </Text>
-            </View>
-        </TouchableOpacity>
-    );
-}
-
-function BackButton() {
-    const navigation = useNavigation();
-
-    function gotopopularevents() {
-        navigation.navigate('Popularevents');
+    function handleDelete() {
+        Alert.alert(
+            "Delete Stage",
+            "Are you sure you want to delete this stage?",
+            [
+                { text: "Cancel", style: "cancel" },
+                { 
+                    text: "Delete", 
+                    style: "destructive", 
+                    onPress: () => {
+                        setUpcommingStages(prevStages => prevStages.filter(s => s.name !== stage.name));
+                        navigation.goBack();
+                    } 
+                }
+            ]
+        );
     }
 
-    return (
-        <TouchableOpacity onPress={gotopopularevents}>
-            <Icon style={styles.backButton} name="chevron-back-circle" size={40} color="#FFB300" />
-        </TouchableOpacity>
-    );
-}
-
-function BookMarkButton() {
-    const navigation = useNavigation();
-
-    function gotofavourite() {
-        navigation.navigate('Favourite');
+    function handleEdit() {
+        navigation.navigate('AddStage', { stage, setUpcommingStages });
     }
-
-    return (
-        <TouchableOpacity onPress={gotofavourite}>
-            <Icon style={styles.bookmarkButton} name="bookmarks" size={30} color="#FFB300" />
-        </TouchableOpacity>
-    );
-}
-
-const Eventdetails = () => {
-    const navigation = useNavigation();
+    
 
     return (
         <View style={styles.container}>
-            
             <View style={styles.header}>
-                <BackButton />
-                <Text style={styles.headerText}>
-                    Event Details
-                </Text>
-                <BookMarkButton />
+                <TouchableOpacity onPress={goBack}>
+                    <Icon style={styles.backButton} name="chevron-back-circle" size={40} color="#FFB300" />
+                </TouchableOpacity>
+                <Text style={styles.headerText}>Stage Details</Text>
+                <TouchableOpacity onPress={() => navigation.navigate('Favourite')}>
+                    <Icon style={styles.bookmarkButton} name="bookmarks" size={30} color="#FFB300" />
+                </TouchableOpacity>
             </View>
 
+            {/* Stage Image */}
             <Image
-                source={require('../../assets/img/festive.jpg')}
+                source={stage.image ? { uri: stage.image } : require('../../assets/img/festive.jpg')}
                 style={styles.eventImage}
             />
 
+            {/* Stage Info */}
             <View style={styles.eventInfoContainer}>
-                <Text style={styles.eventName}>
-                    Event Name
-                </Text>
-                <Text style={styles.eventLocation}>
-                    Event Location
-                </Text>
+                <Text style={styles.eventName}>{stage.name}</Text>
+                <Text style={styles.eventDate}>Start: {stage.startDate}</Text>
+                <Text style={styles.eventDate}>End: {stage.endDate}</Text>
             </View>
 
+            {/* Description */}
             <View style={styles.aboutContainer}>
-                <Text style={styles.aboutHeader}>
-                    About
-                </Text>
-                <Text style={styles.aboutDescription}>
-                    ---description---
-                </Text>
+                <Text style={styles.aboutHeader}>About</Text>
+                <Text style={styles.aboutDescription}>{stage.description}</Text>
             </View>
 
-            <View style={styles.detailsContainer}>
-                <View style={styles.detailItem}>
-                    <Icon style={styles.detailIcon} name="location-sharp" size={30} color="#FFB300" />
-                    <Text style={styles.detailText}>Location</Text>
-                </View>
-                <View style={styles.detailItem}>
-                    <Icon style={styles.detailIcon} name="calendar-clear" size={30} color="#FFB300" />
-                    <Text style={styles.detailText}>Date</Text>
-                </View>
-                <Text style={[styles.detailText, styles.detailTime]}>Time</Text>
+            {/* Buttons */}
+            <View style={styles.buttonContainer}>
+                <TouchableOpacity onPress={handleEdit} style={[styles.button, styles.editButton]}>
+                    <Text style={styles.buttonText}>Edit Stage</Text>
+                </TouchableOpacity>
+                <TouchableOpacity onPress={handleDelete} style={[styles.button, styles.deleteButton]}>
+                    <Text style={styles.buttonText}>Delete Stage</Text>
+                </TouchableOpacity>
             </View>
-
-            <BuyTicketsButton />
         </View>
     );
 };
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: '#118B50',
-        alignItems: 'center',
-    },
-    header: {
-        marginTop: 40,
-        flexDirection: 'row',
-    },
-    headerText: {
-        fontSize: 30,
-        color: '#FFFFFF',
-        marginBottom: 10,
-        marginHorizontal: 40,
-    },
-    backButton: {
-    },
-    buyTicketsButton: {
-        backgroundColor: '#F6BD0F',
-        height: 40,
-        width: 300,
-        justifyContent: 'center',
-        borderRadius: 20,
-        marginTop: 50,
-    },
-    buyTicketsButtonText: {
-        fontSize: 20,
-        color: '#000000',
-        textAlign: 'center',
-        fontWeight: 'bold',
-    },
-    bookmarkButton: {
-        marginTop: 5,
-    },
-    eventImage: {
-        width: 350,
-        height: 200,
-        borderRadius: 20,
-        marginVertical: 10,
-        marginHorizontal: 10,
-    },
-    eventInfoContainer: {
-        marginTop: 10,
-        marginRight: 140,
-    },
-    eventName: {
-        fontSize: 28,
-        color: '#FFFFFF',
-    },
-    eventLocation: {
-        fontSize: 25,
-        color: '#C7ADCE',
-    },
-    aboutContainer: {
-        marginTop: 50,
-        marginRight: 170,
-    },
-    aboutHeader: {
-        fontSize: 23,
-        color: '#FFFFFF',
-    },
-    aboutDescription: {
-        fontSize: 20,
-        color: '#C7ADCE',
-    },
-    detailsContainer: {
-        marginTop: 30,
-        marginRight: 170,
-    },
-    detailItem: {
-        flexDirection: 'row',
-    },
-    detailIcon: {
-    },
-    detailText: {
-        fontSize: 23,
-        color: '#FFFFFF',
-        marginLeft: 10,
-    },
-    detailTime: {
-        marginLeft: 40,
-        marginTop: -12,
-    },
+    container: { flex: 1, backgroundColor: '#118B50', alignItems: 'center', paddingTop: 30 },
+    header: { flexDirection: 'row', alignItems: 'center', width: '100%', justifyContent: 'space-between', paddingHorizontal: 20 },
+    headerText: { fontSize: 25, color: '#FFFFFF' },
+    backButton: { marginRight: 10 },
+    bookmarkButton: { marginTop: 5 },
+    eventImage: { width: 350, height: 200, borderRadius: 20, marginVertical: 10 },
+    eventInfoContainer: { marginTop: 10, alignItems: 'center' },
+    eventName: { fontSize: 28, color: '#FFFFFF', fontWeight: 'bold' },
+    eventDate: { fontSize: 18, color: '#C7ADCE' },
+    aboutContainer: { marginTop: 30, paddingHorizontal: 20 },
+    aboutHeader: { fontSize: 23, color: '#FFFFFF', fontWeight: 'bold' },
+    aboutDescription: { fontSize: 18, color: '#C7ADCE', textAlign: 'center' },
+    buttonContainer: { flexDirection: 'row', marginTop: 30, gap: 15 },
+    button: { padding: 10, borderRadius: 10, width: 140, alignItems: 'center' },
+    editButton: { backgroundColor: '#F6BD0F' },
+    deleteButton: { backgroundColor: '#FF3B30' },
+    buttonText: { fontSize: 18, color: '#000', fontWeight: 'bold' },
 });
 
 export default Eventdetails;

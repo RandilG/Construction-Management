@@ -20,11 +20,12 @@ const Splash = () => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>{'Epic\nEventify'}</Text>
+      <Text style={styles.title}>{'Home\nBuild'}</Text>
+      <Text style={styles.title2}>{'Pro'}</Text>
       <View style={styles.poweredByContainer}>
         <Text style={styles.poweredByText}>Powered by</Text>
         <Image
-          source={require('../../assets/img/hasthiya.png')}
+          source={require('../../assets/img/Logo.png')}
           style={styles.poweredByIcon}
         />
       </View>
@@ -50,6 +51,15 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     lineHeight: 59,
   },
+  title2: {
+    fontSize: 30,
+    color: '#F6BD0F',
+    marginRight: 1,
+    fontWeight: 'bold',
+    lineHeight: 59,
+  },
+
+  
   poweredByContainer: {
     flexDirection: 'row',
     marginTop: 300,
