@@ -8,7 +8,7 @@ module.exports = async function resetPassword(req, res){
     const password = req.body.newPassword
     const hashedPassword = await hashPassword(password)
 
-    const sql = `UPDATE haritha.users SET password = ? WHERE (email = ?);`
+    const sql = `UPDATE homebuild.users SET password = ? WHERE (email = ?);`
 
     connection.query(sql, [hashedPassword, email], (err, result)=>{
         if(err){

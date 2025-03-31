@@ -1,7 +1,7 @@
 const connection = require('../../services/connection');
 
 module.exports = async function (req, res) {
-    const selectOtpSql = 'SELECT * FROM haritha.otp WHERE email = ?';
+    const selectOtpSql = 'SELECT * FROM homebuild.otp WHERE email = ?';
 
     connection.query(selectOtpSql, [req.body.email], (err, result) => {
         if (err) {
@@ -17,7 +17,7 @@ module.exports = async function (req, res) {
         const currentTime = new Date();
 
         if (new Date(otp.otp_expiry) < currentTime) {
-            const deleteOtpSql = 'DELETE FROM haritha.otp WHERE email = ?';
+            const deleteOtpSql = 'DELETE FROM homebuild.otp WHERE email = ?';
 
             connection.query(deleteOtpSql, [req.body.email], (err, result) => {
                 if (err) {
@@ -29,7 +29,7 @@ module.exports = async function (req, res) {
         }
 
         if (otp.otp === req.body.otp) {
-            const deleteOtpSql = 'DELETE FROM haritha.otp WHERE email = ?';
+            const deleteOtpSql = 'DELETE FROM homebuild.otp WHERE email = ?';
 
             connection.query(deleteOtpSql, [req.body.email], (err, result) => {
                 if (err) {

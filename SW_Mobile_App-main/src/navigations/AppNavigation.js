@@ -25,7 +25,8 @@ import Updatedpass from '../screens/Updatedpass';
 import Paymentdetails from '../screens/Paymentdetails';
 import Paymentverification from '../screens/Paymentverification';
 import BottomTabNavigation from './BottomTabNavigation';
-import AddStageScreen from '../screens/AddStageScreen'; // Ensure correct import path
+import AddStageScreen from '../screens/AddStageScreen';
+import OTPVerification from '../screens/OtpVerification';
 
 const Stack = createStackNavigator();
 
@@ -52,6 +53,9 @@ const AppNavigation = () => {
                     cardStyleInterpolator: CardStyleInterpolators.forScaleFromCenterAndroid
                 }}/>
                 <Stack.Screen name="Createacc" component={Createacc} options={{
+                    cardStyleInterpolator: CardStyleInterpolators.forScaleFromCenterAndroid
+                }}/>
+                <Stack.Screen name="OtpVerification" component={OTPVerification} options={{
                     cardStyleInterpolator: CardStyleInterpolators.forScaleFromCenterAndroid
                 }}/>
                 <Stack.Screen name="Editacc" component={Editacc} options={{

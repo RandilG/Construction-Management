@@ -1,66 +1,59 @@
 const connection = require('../../services/connection');
-const { generateAccessToken, generateRefreshToken, hashPassword } = require('./../../utils/authUtils');
-const sendMail = require('./../../utils/sendMail');
-const generateOTP = require('./../../utils/generateOTP');
+const { generateAccessToken, generateRefreshToken, hashPassword } = require('../../utils/authUtils');
+const sendMail = require('../../utils/sendMail');
+const generateOTP = require('../../utils/generateOTP');
 const path = require('path');
 
 module.exports = async function userSignup(req, res) {
-    const insertsql = 'INSERT INTO `haritha`.`users` (`name`, `email`, `nic`, `contact_number`, `password`) VALUES (?, ?, ?, ?, ?);';
-    const selectsql = 'SELECT * FROM users WHERE email = ? || nic = ?;';
+    const insertsql = 'INSERT INTO `homebuild`.`users` (`name`, `email`, `nic`, `contact_number`, `password`) VALUES (?, ?, ?, ?, ?)';
+    const selectsql = 'SELECT * FROM users WHERE email = ? OR nic = ?';
 
     try {
-        connection.query(selectsql, [req.body.email, req.body.nic], async (err, result) => {
-            if (err) {
-                console.log(err);
-                return res.status(500).json("Internal Server Error");
-            }
+        // Check if user already exists
+        const [existingUsers] = await connection.promise().query(selectsql, [req.body.email, req.body.nic]);
 
-            if (result.length > 0) {
-                return res.status(409).json("User already exists");
-            }
+        if (existingUsers.length > 0) {
+            return res.status(409).json({ message: "User already exists" });
+        }
 
-            const password = await hashPassword(req.body.password);
-            const values = [req.body.name, req.body.email, req.body.nic, req.body.contact_number, password];
+        // Hash the password
+        const password = await hashPassword(req.body.password);
+        const values = [req.body.name, req.body.email, req.body.nic, req.body.contact_number, password];
 
-            connection.query(insertsql, values, async (err, result) => {
-                if (err) {
-                    console.log(err);
-                    return res.status(500).json("Internal Server Error");
-                } else {
-                    // Generate OTP and save it in the database
-                    try {
-                        const otp = generateOTP(req.body.email);
+        // Insert new user
+        const [insertResult] = await connection.promise().query(insertsql, values);
 
-                        // Send email to user with OTP
-                        const subject = "Welcome to Epic Eventify";
-                        const htmlTemplatePath = path.resolve(__dirname, '../../templates/otpSend.html');
-                        const replacements = {
-                            name: req.body.name,
-                            otp: otp
-                        };
+        if (insertResult.affectedRows === 0) {
+            return res.status(500).json({ message: "Failed to create user" });
+        }
 
-                        await sendMail(req.body.email, subject, htmlTemplatePath, replacements);
+        // Generate OTP
+        const otp = generateOTP(req.body.email);
 
-                        const accessToken = generateAccessToken(req.body.email);
-                        const refreshToken = generateRefreshToken(req.body.email);
-                        const username = req.body.name;
-                        const email = req.body.email;
+        // Send email with OTP
+        const subject = "Welcome to Home Build Pro! Verify your email address";
+        const htmlTemplatePath = path.resolve(__dirname, '../../templates/otpSend.html');
+        const replacements = {
+            name: req.body.name,
+            otp: otp
+        };
 
-                        return res.status(201).json({
-                            accessToken,
-                            refreshToken,
-                            username,
-                            email
-                        });
-                    } catch (error) {
-                        console.log(error);
-                        return res.status(500).json("Failed to send verification email or save OTP");
-                    }
-                }
-            });
+        await sendMail(req.body.email, subject, htmlTemplatePath, replacements);
+
+        // Generate JWT tokens
+        const accessToken = generateAccessToken(req.body.email);
+        const refreshToken = generateRefreshToken(req.body.email);
+
+        return res.status(201).json({
+            message: "User registered successfully. Check your email for OTP.",
+            accessToken,
+            refreshToken,
+            username: req.body.name,
+            email: req.body.email
         });
-    } catch (err) {
-        console.log(err);
-        return res.status(500).json("Internal Server Error");
+
+    } catch (error) {
+        console.error("Signup error:", error);
+        return res.status(500).json({ message: "Internal Server Error", error: error.message });
     }
 };

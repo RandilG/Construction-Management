@@ -97,4 +97,9 @@ router.get('/get-ticket-data-by-event/:event_id', (req, res)=>{
 router.put('/change-password', (req, res)=>{
     changePassword(req, res)
 });
+
+router.get('/', (req, res) => {
+    res.json({ message: "Server is running" });
+});
+
 module.exports = router

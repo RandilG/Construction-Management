@@ -1,10 +1,51 @@
-import { StyleSheet, Text, View, Image, TouchableOpacity, TextInput } from 'react-native';
-import React from 'react';
+import React, { useState } from 'react'; // ✅ Import useState
+import { StyleSheet, Text, View, Image, TouchableOpacity, TextInput, Alert } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { useNavigation } from '@react-navigation/native'; 
+import axios from 'axios';
 
 function Createprofilefield() {
-    
+    const navigation = useNavigation();
+    const [form, setForm] = useState({ // ✅ Fix: useState now exists
+        name: '',
+        email: '',
+        nic: '',
+        contact_number: '',
+        password: '',
+        confirmPassword: ''
+    });
+
+    const handleInputChange = (field, value) => {
+        setForm({ ...form, [field]: value });
+    };
+
+    const handleSignup = async () => {
+        if (!form.name || !form.email || !form.nic || !form.contact_number || !form.password || !form.confirmPassword) {
+            Alert.alert('Error', 'All fields are required');
+            return;
+        }
+
+        if (form.password !== form.confirmPassword) {
+            Alert.alert('Error', 'Passwords do not match');
+            return;
+        }
+
+        try {
+            const response = await axios.post('http://192.168.8.175:3000/api/signup', {
+                name: form.name,
+                email: form.email,
+                nic: form.nic,
+                contact_number: form.contact_number,
+                password: form.password
+            });
+
+            Alert.alert('Success', response.data.message);
+            navigation.navigate('OtpVerification', { email: form.email }); // Navigate to OTP verification page
+        } catch (error) {
+            console.error("Signup Error:", error);
+            Alert.alert('Signup Failed', error.response?.data?.message || 'Something went wrong');
+        }
+    };
 
     return (
         <View>
@@ -13,6 +54,8 @@ function Createprofilefield() {
                     placeholder='Enter Full Name'
                     placeholderTextColor={'#000000'}
                     style={styles.input}
+                    onChangeText={(text) => handleInputChange('name', text)}
+                    value={form.name}
                 />
             </View>
             <View style={[styles.inputContainer, { marginTop: 30 }]}>
@@ -20,6 +63,8 @@ function Createprofilefield() {
                     placeholder='Enter Email Address'
                     placeholderTextColor={'#000000'}
                     style={styles.input}
+                    onChangeText={(text) => handleInputChange('email', text)}
+                    value={form.email}
                 />
             </View>
             <View style={[styles.inputContainer, { marginTop: 30 }]}>
@@ -27,6 +72,8 @@ function Createprofilefield() {
                     placeholder='Enter NIC'
                     placeholderTextColor={'#000000'}
                     style={styles.input}
+                    onChangeText={(text) => handleInputChange('nic', text)}
+                    value={form.nic}
                 />
             </View>
             <View style={[styles.inputContainer, { marginTop: 30 }]}>
@@ -34,13 +81,18 @@ function Createprofilefield() {
                     placeholder='Enter Contact No'
                     placeholderTextColor={'#000000'}
                     style={styles.input}
+                    onChangeText={(text) => handleInputChange('contact_number', text)}
+                    value={form.contact_number}
                 />
             </View>
             <View style={[styles.inputContainer, { marginTop: 30 }]}>
                 <TextInput
-                    placeholder='Enter New Password '
+                    placeholder='Enter New Password'
                     placeholderTextColor={'#000000'}
                     style={styles.input}
+                    secureTextEntry
+                    onChangeText={(text) => handleInputChange('password', text)}
+                    value={form.password}
                 />
             </View>
             <View style={[styles.inputContainer, { marginTop: 30 }]}>
@@ -48,37 +100,29 @@ function Createprofilefield() {
                     placeholder='Confirm Password'
                     placeholderTextColor={'#000000'}
                     style={styles.input}
+                    secureTextEntry
+                    onChangeText={(text) => handleInputChange('confirmPassword', text)}
+                    value={form.confirmPassword}
                 />
             </View>
-            <BottomButtons />
+            <BottomButtons handleSignup={handleSignup} />
         </View>
     );
 }
 
-function BottomButtons() {
-    const navigation = useNavigation(); 
-    function gobacktologin() {
-        navigation.navigate('Login');
-    }
-
-    function gotodashboard() {
-        navigation.navigate('BottomTabNavigation');
-    }
+function BottomButtons({ handleSignup }) {
+    const navigation = useNavigation();
 
     return (
         <View style={styles.buttonContainer}>
-            <TouchableOpacity onPress={gobacktologin}>
+            <TouchableOpacity onPress={() => navigation.navigate('Login')}>
                 <View style={styles.button}>
-                    <Text style={styles.buttonText}>
-                        Cancel
-                    </Text>
+                    <Text style={styles.buttonText}>Cancel</Text>
                 </View>
             </TouchableOpacity>
-            <TouchableOpacity onPress={gotodashboard}>
+            <TouchableOpacity onPress={handleSignup}>
                 <View style={[styles.button, { marginLeft: 20 }]}>
-                    <Text style={styles.buttonText}>
-                        Create
-                    </Text>
+                    <Text style={styles.buttonText}>Create</Text>
                 </View>
             </TouchableOpacity>
         </View>
@@ -99,8 +143,8 @@ const Createacc = () => {
                 <Createprofilefield />
             </View>
         </KeyboardAwareScrollView>
-    )
-}
+    );
+};
 
 const styles = StyleSheet.create({
     container: {
@@ -157,4 +201,5 @@ const styles = StyleSheet.create({
         textAlign: 'center'
     }
 });
+
 export default Createacc;

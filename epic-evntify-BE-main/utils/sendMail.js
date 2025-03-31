@@ -23,7 +23,7 @@ const sendMail = (to, subject, htmlTemplatePath, replacements) => {
       }
 
       const mailOptions = {
-        from: `"Epic Eventify" <${process.env.GMAIL_USER}>`,
+        from: `"Home Build Pro" <${process.env.GMAIL_USER}>`,
         to: to,
         subject: subject,
         html: html,

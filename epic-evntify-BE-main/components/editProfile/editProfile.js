@@ -4,7 +4,7 @@ module.exports = async function editProfile(req, res) {
 
  values = [req.body.name, req.body.email, req.body.nic, req.body.contact_number, parseInt(req.body.user_id)]
 
-    const sql = 'UPDATE haritha.users SET name = ?, email = ?, nic = ?, contact_number = ? WHERE id = ?;';
+    const sql = 'UPDATE homebuild.users SET name = ?, email = ?, nic = ?, contact_number = ? WHERE id = ?;';
     
     connection.query(sql, [req.body.name, req.body.email, req.body.nic, req.body.contact_number, req.body.user_id], (err, result) => {
         if (err) {
