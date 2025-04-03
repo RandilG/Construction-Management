@@ -1,10 +1,10 @@
-import React from 'react';
-import { StyleSheet, Text, View, StatusBar, TextInput, TouchableOpacity } from 'react-native';
+import React, { useState } from 'react';
+import { StyleSheet, Text, View, StatusBar, TextInput, TouchableOpacity, Alert, ActivityIndicator } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
 import { useNavigation } from '@react-navigation/native';
-
+import axios from 'axios';
 
 // Validation using Yup
 const LoginSchema = Yup.object().shape({
@@ -23,9 +23,51 @@ const LoginSchema = Yup.object().shape({
 
 const Login = () => {
   const navigation = useNavigation();
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleLogin = (values) => {
-    navigation.navigate('BottomTabNavigation'); 
+  const handleLogin = async (values) => {
+    setIsLoading(true);
+    
+    try {
+      // Replace with your actual API endpoint
+      const response = await axios.post('http://192.168.8.116:3000/api/signin', {
+        email: values.username,
+        password: values.password
+      });
+      
+      setIsLoading(false);
+      
+      // Store auth tokens if needed (you might want to use AsyncStorage for this)
+      // AsyncStorage.setItem('accessToken', response.data.accessToken);
+      // AsyncStorage.setItem('refreshToken', response.data.refreshToken);
+      
+      // You might want to store user info in a global state (Redux/Context)
+      // dispatch({ type: 'SET_USER', payload: response.data.user });
+      
+      // Navigate to home screen
+      navigation.navigate('BottomTabNavigation');
+      
+    } catch (error) {
+      setIsLoading(false);
+      
+      // Handle different types of errors
+      if (error.response) {
+        // The server responded with a status code outside the 2xx range
+        if (error.response.status === 401) {
+          Alert.alert('Login Failed', 'Invalid email or password');
+        } else {
+          Alert.alert('Login Failed', error.response.data.message || 'Something went wrong');
+        }
+      } else if (error.request) {
+        // The request was made but no response was received
+        Alert.alert('Network Error', 'Could not connect to the server. Please check your internet connection.');
+      } else {
+        // Something happened in setting up the request
+        Alert.alert('Error', 'An unexpected error occurred');
+      }
+      
+      console.error('Login Error:', error);
+    }
   };
 
   return (
@@ -47,25 +89,36 @@ const Login = () => {
                 placeholder="Email"
                 placeholderTextColor="#000000"
                 style={styles.input}
-                onChangeText={handleChange('username')} // Update username value on change
-                onBlur={handleBlur('username')} // Handle blur event when user moves focus away from username input
-                value={values.username} // Current value of username input
+                onChangeText={handleChange('username')}
+                onBlur={handleBlur('username')}
+                value={values.username}
+                keyboardType="email-address"
+                autoCapitalize="none"
               />
               {touched.username && errors.username && <Text style={styles.error}>{errors.username}</Text>}
 
               <TextInput
                 placeholder="Password"
                 placeholderTextColor="#000000"
-                secureTextEntry={true} // Hide password characters
+                secureTextEntry={true}
                 style={styles.input}
-                onChangeText={handleChange('password')} // Update password value on change
-                onBlur={handleBlur('password')} // Handle blur event when user moves focus away from password input
-                value={values.password} // Current value of password input
+                onChangeText={handleChange('password')}
+                onBlur={handleBlur('password')}
+                value={values.password}
+                autoCapitalize="none"
               />
               {touched.password && errors.password && <Text style={styles.error}>{errors.password}</Text>}
 
-              <TouchableOpacity onPress={handleSubmit} style={styles.button}>
-                <Text style={styles.buttonText}>Login</Text>
+              <TouchableOpacity 
+                onPress={handleSubmit} 
+                style={styles.button}
+                disabled={isLoading}
+              >
+                {isLoading ? (
+                  <ActivityIndicator size="small" color="#000000" />
+                ) : (
+                  <Text style={styles.buttonText}>Login</Text>
+                )}
               </TouchableOpacity>
 
               <TouchableOpacity onPress={() => navigation.navigate('Resetpass1')}>

@@ -5,7 +5,6 @@ const generateOTP = require('../../utils/generateOTP');
 const path = require('path');
 
 module.exports = async function userSignup(req, res) {
-    const insertsql = 'INSERT INTO `homebuild`.`users` (`name`, `email`, `nic`, `contact_number`, `password`) VALUES (?, ?, ?, ?, ?)';
     const selectsql = 'SELECT * FROM users WHERE email = ? OR nic = ?';
 
     try {
@@ -18,17 +17,30 @@ module.exports = async function userSignup(req, res) {
 
         // Hash the password
         const password = await hashPassword(req.body.password);
-        const values = [req.body.name, req.body.email, req.body.nic, req.body.contact_number, password];
-
-        // Insert new user
-        const [insertResult] = await connection.promise().query(insertsql, values);
-
-        if (insertResult.affectedRows === 0) {
-            return res.status(500).json({ message: "Failed to create user" });
-        }
-
+        
+        // Store user data in the OTP table or a temporary users table
+        // Here we'll store the user data in a JSON column in the OTP table
+        const userData = {
+            name: req.body.name,
+            email: req.body.email,
+            nic: req.body.nic,
+            contact_number: req.body.contact_number,
+            password: password
+        };
+        
         // Generate OTP
         const otp = generateOTP(req.body.email);
+        
+        // Store OTP and user data in the OTP table
+        const insertOtpSql = 'INSERT INTO `homebuild`.`otp` (`email`, `otp`, `otp_expiry`, `user_data`) VALUES (?, ?, ?, ?)';
+        const otpExpiry = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes from now
+        
+        await connection.promise().query(insertOtpSql, [
+            req.body.email, 
+            otp, 
+            otpExpiry, 
+            JSON.stringify(userData)
+        ]);
 
         // Send email with OTP
         const subject = "Welcome to Home Build Pro! Verify your email address";
@@ -40,15 +52,8 @@ module.exports = async function userSignup(req, res) {
 
         await sendMail(req.body.email, subject, htmlTemplatePath, replacements);
 
-        // Generate JWT tokens
-        const accessToken = generateAccessToken(req.body.email);
-        const refreshToken = generateRefreshToken(req.body.email);
-
         return res.status(201).json({
-            message: "User registered successfully. Check your email for OTP.",
-            accessToken,
-            refreshToken,
-            username: req.body.name,
+            message: "Verification code sent to your email. Please verify to complete registration.",
             email: req.body.email
         });
 
