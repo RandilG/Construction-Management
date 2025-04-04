@@ -35,7 +35,7 @@ const UpcommingStages = () => {
     };
     
     function gotoSelectTickets(stage) {
-        navigation.navigate('Eventdetails', { stage });
+        navigation.navigate('Stagedetails', { stage });
     }
 
     function gotoAddStage() {
@@ -43,7 +43,7 @@ const UpcommingStages = () => {
     }
     
     function handleStagePress(stage) {
-        navigation.navigate('Eventdetails', { stage, onStageUpdated: fetchStages });
+        navigation.navigate('Stagedetails', { stage, onStageUpdated: fetchStages });
     }
     
     return (
