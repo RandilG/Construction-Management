@@ -3,6 +3,7 @@ import { StyleSheet, Text, View, StatusBar, TextInput, TouchableOpacity, Alert, 
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
 import axios from 'axios';
 
@@ -37,15 +38,18 @@ const Login = () => {
       
       setIsLoading(false);
       
-      // Store auth tokens if needed (you might want to use AsyncStorage for this)
-      // AsyncStorage.setItem('accessToken', response.data.accessToken);
-      // AsyncStorage.setItem('refreshToken', response.data.refreshToken);
+      // Store tokens and user information
+      await AsyncStorage.setItem('accessToken', response.data.accessToken);
+      await AsyncStorage.setItem('refreshToken', response.data.refreshToken);
+      await AsyncStorage.setItem('username', response.data.username);
+      await AsyncStorage.setItem('email', response.data.email);
+      await AsyncStorage.setItem('user_id', response.data.user_id.toString()); // Store user_id
       
-      // You might want to store user info in a global state (Redux/Context)
-      // dispatch({ type: 'SET_USER', payload: response.data.user });
-      
-      // Navigate to home screen
-      navigation.navigate('BottomTabNavigation');
+      // Navigate to dashboard
+      navigation.reset({
+        index: 0,
+        routes: [{ name: 'Dashboard' }],
+      });
       
     } catch (error) {
       setIsLoading(false);

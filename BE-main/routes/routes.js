@@ -2,12 +2,6 @@ const express = require('express');
 const router = express.Router();
 
 // Import all your existing components
-const createPayment = require('../components/createPayment/createPayment');
-const savePaymentData = require('../components/savePaymentData/savePaymentData');
-const getEventData = require('../components/getEventData/getEventData');
-const getEventDataById = require('../components/getEventDataById/getEventDataById');
-const getPopularEvent = require('../components/getPopularEvent/getPopularEvent');
-const getUpcomingEventData = require('../components/getUpcomingEventData/getUpcomigEventData');
 const userSignup = require('../components/userSignup/userSignup');
 const userSignin = require('../components/userSignin/userSignin');
 const { authenticateToken } = require('../utils/authUtils');
@@ -15,42 +9,31 @@ const mailTest = require('../components/test/mailTest');
 const verifyOtp = require('../components/verifyOtp/verifyOtp');
 const ResetPasswordVerification = require('../components/ResetPasswordVerification/ResetPasswordVerification');
 const resetPassword = require('../components/resetPassword/resetPassword');
-const getTicketsDataByUser = require('../components/getTicketsDataByUser/getTicketsDataByUser');
 const uploadImage = require('../components/uploadImage/uploadImage');
 const getUserById = require('../components/getUserById/getUserById');
-const editProfile = require('../components/editProfile/editProfile');
-const getTicketDataByEvent = require('../components/getTicketDataByEvent/getTicketDataByEvent');
+const ProfileController = require('../components/Profile/Profile');
+const settingsController = require('../components/Settings/Settings');
 const changePassword = require('../components/changePassword/changePassword');
+const getUserByEmail = require('../components/getUserByEmail/getUserByEmail');
+const getStages = require('../components/getStages/getStages');
+const getUserProjects = require('../components/getUserProjects/getUserProjects');
+const addNewProject = require('../components/addNewProject/addNewProject');
+const getProjectById = require('../components/getProjectById/getProjectById');
+const getProjectDetails = require('../components/getProjectDetails/getProjectDetails');
+const deleteProject = require('../components/deleteProject/deleteProject');
+const getProjectMessages = require('../components/getProjectMessages/getProjectMessages');
+const createProjectMessage = require('../components/createProjectMessage/createProjectMessage');
+const getProjectMembers = require('../components/getProjectMembers/getProjectMembers');
+const addProjectMembers = require('../components/addProjectMembers/addProjectMembers');
+const searchUsers = require('../components/searchUsers/searchUsers');
+const getAllProjects = require('../components/getAllProjects/getAllProjects');
+
 
 // Import stage controller and upload middleware
 const stagesController = require('../components/stagesController/stagesController');
 const { uploadStageImage } = require('../middleware/uploadMiddleware');
 
 // Existing routes
-router.post('/create-payment-intent', (req, res) => {
-    createPayment(req, res);
-});
-
-router.post('/savepayment', async(req, res) => {
-    savePaymentData(req, res);
-});
-
-router.get('/getallevents', async(req, res) => {
-    getEventData(req, res);
-});
-
-router.get('/geteventdatabyid/:id', async(req, res) => {
-    getEventDataById(req, res);
-});
-
-router.get('/getupcomingeventdata', async(req, res) => {
-    getUpcomingEventData(req, res);
-});
-
-router.get('/getmostpopularevent', async(req, res) => {
-    getPopularEvent(req, res);
-});
-
 router.post('/signup', async(req, res) => {
     userSignup(req, res);
 });
@@ -79,10 +62,6 @@ router.post('/reset-password', (req, res) => {
     resetPassword(req, res);
 });
 
-router.get('/get-tickets-data-by-user/:user_id/:event_id', (req, res) => {
-    getTicketsDataByUser(req, res);
-});
-
 router.put('/upload-image', (req, res) => {
     uploadImage(req, res);
 });
@@ -92,16 +71,13 @@ router.get('/get-user/:id', (req, res) => {
 });
 
 router.put('/edit-user', (req, res) => {
-    editProfile(req, res);
-});
-
-router.get('/get-ticket-data-by-event/:event_id', (req, res) => {
-    getTicketDataByEvent(req, res);
+    updateProfile(req, res);
 });
 
 router.put('/change-password', (req, res) => {
     changePassword(req, res);
 });
+
 
 // Root route
 router.get('/', (req, res) => {
@@ -114,5 +90,34 @@ router.get('/stages/:id', stagesController.getStageById);
 router.post('/stages', uploadStageImage.single('image'), stagesController.addStage);
 router.put('/stages/:id', uploadStageImage.single('image'), stagesController.updateStage);
 router.delete('/stages/:id', stagesController.deleteStage);
+
+// Project routes
+router.get('/projects/:email', getUserProjects);
+router.get('/project/:id', getProjectById);
+router.post('/addNewProjects', addNewProject);
+
+// Project routes
+router.get('/projects', getAllProjects); // Get all projects
+router.get('/projects/:id', getProjectDetails);
+router.delete('/projects/:id', deleteProject);
+
+// Project messages routes
+router.get('/projects/:id/messages', getProjectMessages);
+router.post('/projects/:id/messages', createProjectMessage);
+
+// Project members routes
+router.get('/projects/:id/members', getProjectMembers);
+router.post('/projects/:id/members', addProjectMembers);
+
+// User search route
+router.get('/users/search', searchUsers);
+
+// Profile routes
+router.get('/get-user/:email', ProfileController.getUserProfile);
+router.put('/update-user/:email', ProfileController.updateProfile);
+
+// Settings routes
+router.get('/user-settings/:email', settingsController.getUserSettings);
+router.post('/update-settings/:email', settingsController.updateSettings);
 
 module.exports = router;

@@ -1,7 +1,7 @@
 const connection = require('../../services/connection')
 
 module.exports = async function getUserById( req, res){
-    const sql = 'SELECT id, name, email, nic, contact_number, profile_image FROM homebuild.users where id =?;'
+    const sql = 'SELECT id, name, email, nic, contact_number FROM homebuild.users where email =?;'
 
     connection.query(sql, req.params.id, (err, result)=>{
         if(err){
