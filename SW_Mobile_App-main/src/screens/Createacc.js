@@ -124,7 +124,7 @@ function Createprofilefield() {
                 password: form.password
             });
 
-            Alert.alert('Success', response.data.message || 'Account created successfully!');
+            Alert.alert('Success', response.data.message || 'Account created successfully! Please verify your email');
             navigation.navigate('OtpVerification', { email: form.email });
         } catch (error) {
             console.error("Signup Error:", error);

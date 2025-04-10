@@ -5,55 +5,75 @@ module.exports = async function (req, res) {
     const selectOtpSql = 'SELECT * FROM homebuild.otp WHERE email = ?';
 
     try {
-        const [otpResults] = await connection.promise().query(selectOtpSql, [req.body.email]);
+        // Ensure we're working with strings for comparison
+        const email = String(req.body.email).trim();
+        const providedOtp = String(req.body.otp).trim();
+        
+        console.log("Verifying OTP:", email, providedOtp); // Debug log
+        
+        const [otpResults] = await connection.promise().query(selectOtpSql, [email]);
         
         if (otpResults.length === 0) {
+            console.log("No OTP found for email:", email);
             return res.status(404).json({ message: "OTP not found for this email." });
         }
 
         const otpRecord = otpResults[0];
         const currentTime = new Date();
-
+        
+        // Check if OTP has expired
         if (new Date(otpRecord.otp_expiry) < currentTime) {
+            console.log("OTP expired");
             // Delete expired OTP
-            await connection.promise().query('DELETE FROM homebuild.otp WHERE email = ?', [req.body.email]);
+            await connection.promise().query('DELETE FROM homebuild.otp WHERE email = ?', [email]);
             return res.status(408).json({ message: 'OTP has expired. Please request a new one.' });
         }
 
-        if (otpRecord.otp === req.body.otp) {
-            // OTP is correct, now save the user data to users table
-            const userData = JSON.parse(otpRecord.user_data);
+        // Ensure we're comparing strings
+        const storedOtp = String(otpRecord.otp).trim();
+        
+        if (storedOtp === providedOtp) {
+            console.log("OTP verified successfully");
             
-            const insertUserSql = 'INSERT INTO `homebuild`.`users` (`name`, `email`, `nic`, `contact_number`, `password`) VALUES (?, ?, ?, ?, ?)';
-            const values = [
-                userData.name, 
-                userData.email, 
-                userData.nic, 
-                userData.contact_number, 
-                userData.password
-            ];
+            // Update user's verification status
+            const updateUserSql = 'UPDATE `homebuild`.`users` SET `is_verified` = ? WHERE `email` = ?';
+            
+            try {
+                const [updateResult] = await connection.promise().query(updateUserSql, [true, email]);
+                
+                if (updateResult.affectedRows === 0) {
+                    return res.status(404).json({ message: "User not found" });
+                }
+                
+                console.log("User verification status updated successfully");
+            } catch (updateError) {
+                console.error("Error updating user verification status:", updateError);
+                return res.status(500).json({ message: "Failed to update verification status", error: updateError.message });
+            }
 
-            const [insertResult] = await connection.promise().query(insertUserSql, values);
+            // Get user data
+            const [userData] = await connection.promise().query('SELECT * FROM `homebuild`.`users` WHERE `email` = ?', [email]);
             
-            if (insertResult.affectedRows === 0) {
-                return res.status(500).json({ message: "Failed to create user account" });
+            if (userData.length === 0) {
+                return res.status(404).json({ message: "User not found" });
             }
 
             // Generate JWT tokens
-            const accessToken = generateAccessToken(userData.email);
-            const refreshToken = generateRefreshToken(userData.email);
+            const accessToken = generateAccessToken(email);
+            const refreshToken = generateRefreshToken(email);
             
             // Delete the OTP record
-            await connection.promise().query('DELETE FROM homebuild.otp WHERE email = ?', [req.body.email]);
+            await connection.promise().query('DELETE FROM homebuild.otp WHERE email = ?', [email]);
 
             return res.status(200).json({
-                message: 'Email verification successful. Your account has been created.',
+                message: 'Email verification successful. Your account has been activated.',
                 accessToken,
                 refreshToken,
-                username: userData.name,
-                email: userData.email
+                username: userData[0].name,
+                email: userData[0].email
             });
         } else {
+            console.log("Invalid OTP provided");
             return res.status(400).json({ message: 'Invalid OTP. Please try again.' });
         }
     } catch (error) {

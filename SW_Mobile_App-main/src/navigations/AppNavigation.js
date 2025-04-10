@@ -24,7 +24,7 @@ import ViewProjects from '../screens/ViewProjects';
 import ProjectDetails from '../screens/ProjectDetails';
 import AddMembersScreen from '../screens/AddMembers';
 import ChatScreen from '../screens/ChatScreen';
-import SidebarNavigation from './SidebarNavigation';
+// import SidebarNavigation from './SidebarNavigation';
 import SettingsScreen from '../screens/Settings';
 
 const Stack = createStackNavigator();
@@ -99,9 +99,9 @@ const AppNavigation = () => {
                 <Stack.Screen name="ChatScreen" component={ChatScreen} options={{
                     cardStyleInterpolator: CardStyleInterpolators.forScaleFromCenterAndroid
                 }}/>
-                <Stack.Screen name="SidebarNavigation" component={SidebarNavigation} options={{
+                {/* <Stack.Screen name="SidebarNavigation" component={SidebarNavigation} options={{
                     cardStyleInterpolator: CardStyleInterpolators.forScaleFromCenterAndroid
-                }}/>
+                }}/> */}
                 <Stack.Screen name="Settings" component={SettingsScreen} options={{
                     cardStyleInterpolator: CardStyleInterpolators.forScaleFromCenterAndroid
                 }}/>
