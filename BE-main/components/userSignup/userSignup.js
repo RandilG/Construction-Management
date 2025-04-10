@@ -18,28 +18,34 @@ module.exports = async function userSignup(req, res) {
         // Hash the password
         const password = await hashPassword(req.body.password);
         
-        // Store user data in the OTP table or a temporary users table
-        // Here we'll store the user data in a JSON column in the OTP table
-        const userData = {
-            name: req.body.name,
-            email: req.body.email,
-            nic: req.body.nic,
-            contact_number: req.body.contact_number,
-            password: password
-        };
+        // Insert user data directly into users table, with isVerified flag set to false
+        const insertUserSql = 'INSERT INTO `homebuild`.`users` (`name`, `email`, `nic`, `contact_number`, `password`, `is_verified`) VALUES (?, ?, ?, ?, ?, ?)';
+        const userValues = [
+            req.body.name, 
+            req.body.email, 
+            req.body.nic, 
+            req.body.contact_number, 
+            password,
+            false // User is not verified yet
+        ];
+
+        const [insertResult] = await connection.promise().query(insertUserSql, userValues);
+        
+        if (insertResult.affectedRows === 0) {
+            return res.status(500).json({ message: "Failed to create user account" });
+        }
         
         // Generate OTP
         const otp = generateOTP(req.body.email);
         
-        // Store OTP and user data in the OTP table
-        const insertOtpSql = 'INSERT INTO `homebuild`.`otp` (`email`, `otp`, `otp_expiry`, `user_data`) VALUES (?, ?, ?, ?)';
+        // Store OTP in the OTP table (without storing user data again)
+        const insertOtpSql = 'INSERT INTO `homebuild`.`otp` (`email`, `otp`, `otp_expiry`) VALUES (?, ?, ?)';
         const otpExpiry = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes from now
         
         await connection.promise().query(insertOtpSql, [
             req.body.email, 
             otp, 
-            otpExpiry, 
-            JSON.stringify(userData)
+            otpExpiry
         ]);
 
         // Send email with OTP
@@ -53,7 +59,7 @@ module.exports = async function userSignup(req, res) {
         await sendMail(req.body.email, subject, htmlTemplatePath, replacements);
 
         return res.status(201).json({
-            message: "Verification code sent to your email. Please verify to complete registration.",
+            message: "Account created! Verification code sent to your email. Please verify to activate your account.",
             email: req.body.email
         });
 

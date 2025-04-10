@@ -1,6 +1,7 @@
 const connection = require('../../services/connection');
 
 module.exports = function addNewProject(req, res) {
+    console.log('Received project data:', req.body);
     const { name, description, startDate, estimatedEndDate, userId, imageUrl, currentStageId } = req.body;
     
     if (!name || !userId) {

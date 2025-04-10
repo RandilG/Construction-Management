@@ -243,7 +243,7 @@ const AddProject = () => {
                 currentStageId: 1
             };
             
-            await axios.post('http://192.168.8.116:3000/api/projects', projectData);
+            await axios.post('http://192.168.8.116:8081/api/addNewProject', projectData);
             Alert.alert('Success', 'Project created successfully!', [{ text: 'OK', onPress: () => navigation.navigate('Dashboard') }]);
         } catch (error) {
             console.error('Error creating project:', error);

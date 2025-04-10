@@ -94,7 +94,7 @@ router.delete('/stages/:id', stagesController.deleteStage);
 // Project routes
 router.get('/projects/:email', getUserProjects);
 router.get('/project/:id', getProjectById);
-router.post('/addNewProjects', addNewProject);
+router.post('/addNewProject', addNewProject);
 
 // Project routes
 router.get('/projects', getAllProjects); // Get all projects
