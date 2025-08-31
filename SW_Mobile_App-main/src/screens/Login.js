@@ -31,7 +31,7 @@ const Login = () => {
     
     try {
       // Replace with your actual API endpoint
-      const response = await axios.post('http://192.168.8.116:3000/api/signin', {
+      const response = await axios.post('http://localhost:3000/api/auth/signin', {
         email: values.username,
         password: values.password
       });
