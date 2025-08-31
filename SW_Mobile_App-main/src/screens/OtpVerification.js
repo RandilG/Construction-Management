@@ -60,7 +60,7 @@ const OTPVerification = () => {
     }
 
     try {
-      const response = await axios.post('http://192.168.8.116:8081/api/verify-otp', {
+      const response = await axios.post('http://localhost:3000/api/auth/verify-otp', {
         email,
         otp: otpCode
       });
@@ -78,7 +78,7 @@ const OTPVerification = () => {
 
   const handleResendOtp = async () => {
     try {
-      const response = await axios.post('http://192.168.8.116:8081/api/resend-otp', {
+      const response = await axios.post('http://localhost:3000/api/auth/resend-otp', {
         email
       });
 

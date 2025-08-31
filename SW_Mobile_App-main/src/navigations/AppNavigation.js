@@ -4,7 +4,7 @@ import { NavigationContainer } from '@react-navigation/native';
 // Importing screens
 import Changepass from '../screens/Changepass';
 import Chats from '../screens/Chats';
-import Createacc from '../screens/Createacc';
+import Signup from '../screens/Signup';
 import Dashboard from '../screens/Dashboard';
 import Editacc from '../screens/Editacc';
 import Stagedetails from '../screens/Stagedetails';
@@ -51,7 +51,7 @@ const AppNavigation = () => {
                 <Stack.Screen name="Updatedpass" component={Updatedpass} options={{
                     cardStyleInterpolator: CardStyleInterpolators.forScaleFromCenterAndroid
                 }}/>
-                <Stack.Screen name="Createacc" component={Createacc} options={{
+                <Stack.Screen name="Signup" component={Signup} options={{
                     cardStyleInterpolator: CardStyleInterpolators.forScaleFromCenterAndroid
                 }}/>
                 <Stack.Screen name="OtpVerification" component={OTPVerification} options={{
