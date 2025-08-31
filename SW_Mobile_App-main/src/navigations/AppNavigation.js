@@ -1,114 +1,91 @@
 import { createStackNavigator, CardStyleInterpolators } from '@react-navigation/stack';
 import { NavigationContainer } from '@react-navigation/native';
 
-// Importing screens
-import Changepass from '../screens/Changepass';
-import Chats from '../screens/Chats';
-import Createacc from '../screens/Createacc';
-import Dashboard from '../screens/Dashboard';
-import Editacc from '../screens/Editacc';
-import Stagedetails from '../screens/Stagedetails';
-import Login from '../screens/Login';
-import Newpass from '../screens/Newpass';
-import Notifications from '../screens/Notifications';
-import UpcommingStages from '../screens/UpcommingStages';
-import ProfileScreen from '../screens/Profile';
-import Resetpass1 from '../screens/Resetpass1';
-import Resetpass2 from '../screens/Resetpass2';
-import Splash from '../screens/Splash';
-import Updatedpass from '../screens/Updatedpass';
-import AddStageScreen from '../screens/AddStageScreen';
-import OTPVerification from '../screens/OtpVerification';
-import AddProject from '../screens/AddProject';
-import ViewProjects from '../screens/ViewProjects';
-import ProjectDetails from '../screens/ProjectDetails';
-import AddMembersScreen from '../screens/AddMembers';
-import ChatScreen from '../screens/ChatScreen';
-// import SidebarNavigation from './SidebarNavigation';
-import SettingsScreen from '../screens/Settings';
+// 🔹 Auth Screens
+import Splash from '../screens/auth/Splash';
+import Login from '../screens/auth/Login';
+import Signup from '../screens/auth/Signup';
+import OTPVerification from '../screens/auth/OtpVerification';
+import Resetpass1 from '../screens/auth/Resetpass1';
+import Resetpass2 from '../screens/auth/Resetpass2';
+import Newpass from '../screens/auth/Newpass';
+import Updatedpass from '../screens/auth/Updatedpass';
+
+// 🔹 Profile & Account
+import ProfileScreen from '../screens/profile/Profile';
+import Editacc from '../screens/profile/Editacc';
+import Changepass from '../screens/profile/Changepass';
+
+// 🔹 Main / Dashboard
+import Dashboard from '../screens/dashboard/Dashboard';
+import Notifications from '../screens/dashboard/Notifications';
+import SettingsScreen from '../screens/dashboard/Settings';
+
+// 🔹 Projects
+import ViewProjects from '../screens/projects/ViewProjects';
+import AddProject from '../screens/projects/AddProject';
+import ProjectDetails from '../screens/projects/ProjectDetails';
+
+// 🔹 Members
+import AddMembersScreen from '../screens/members/AddMembers';
+
+// 🔹 Stages
+import UpcommingStages from '../screens/stages/UpcommingStages';
+import Stagedetails from '../screens/stages/Stagedetails';
+import AddStageScreen from '../screens/stages/AddStageScreen';
+
+// 🔹 Chat
+import Chats from '../screens/chat/Chats';
+import ChatScreen from '../screens/chat/ChatScreen';
 
 const Stack = createStackNavigator();
 
 const AppNavigation = () => {
-    return (
-        <NavigationContainer>
-            <Stack.Navigator screenOptions={{
-                headerShown: false // Hide the header for all screens
-            }}>
-                <Stack.Screen name="Splash" component={Splash} />
-                <Stack.Screen name="Login" component={Login} options={{
-                    cardStyleInterpolator: CardStyleInterpolators.forScaleFromCenterAndroid
-                }}/>
-                <Stack.Screen name="Resetpass1" component={Resetpass1} options={{
-                    cardStyleInterpolator: CardStyleInterpolators.forScaleFromCenterAndroid
-                }}/>
-                <Stack.Screen name="Resetpass2" component={Resetpass2} options={{
-                    cardStyleInterpolator: CardStyleInterpolators.forScaleFromCenterAndroid
-                }}/>
-                <Stack.Screen name="Newpass" component={Newpass} options={{
-                    cardStyleInterpolator: CardStyleInterpolators.forScaleFromCenterAndroid
-                }}/>
-                <Stack.Screen name="Updatedpass" component={Updatedpass} options={{
-                    cardStyleInterpolator: CardStyleInterpolators.forScaleFromCenterAndroid
-                }}/>
-                <Stack.Screen name="Createacc" component={Createacc} options={{
-                    cardStyleInterpolator: CardStyleInterpolators.forScaleFromCenterAndroid
-                }}/>
-                <Stack.Screen name="OtpVerification" component={OTPVerification} options={{
-                    cardStyleInterpolator: CardStyleInterpolators.forScaleFromCenterAndroid
-                }}/>
-                <Stack.Screen name="Editacc" component={Editacc} options={{
-                    cardStyleInterpolator: CardStyleInterpolators.forScaleFromCenterAndroid
-                }}/>
-                <Stack.Screen name="Changepass" component={Changepass} options={{
-                    cardStyleInterpolator: CardStyleInterpolators.forScaleFromCenterAndroid
-                }}/>
-                <Stack.Screen name="Dashboard" component={Dashboard} options={{
-                    cardStyleInterpolator: CardStyleInterpolators.forScaleFromCenterAndroid
-                }}/>
-                <Stack.Screen name="Stagedetails" component={Stagedetails} options={{
-                    cardStyleInterpolator: CardStyleInterpolators.forScaleFromCenterAndroid
-                }}/>
-                <Stack.Screen name="UpcommingStages" component={UpcommingStages} options={{
-                    cardStyleInterpolator: CardStyleInterpolators.forScaleFromCenterAndroid
-                }}/>
-                <Stack.Screen name="ProfileScreen" component={ProfileScreen} options={{
-                    cardStyleInterpolator: CardStyleInterpolators.forScaleFromCenterAndroid
-                }}/>
-                <Stack.Screen name="Chats" component={Chats} options={{
-                    cardStyleInterpolator: CardStyleInterpolators.forScaleFromCenterAndroid
-                }}/>
-                <Stack.Screen name="Notifications" component={Notifications} options={{
-                    cardStyleInterpolator: CardStyleInterpolators.forScaleFromCenterAndroid
-                }}/>
-                <Stack.Screen name="AddStage" component={AddStageScreen} options={{
-                    cardStyleInterpolator: CardStyleInterpolators.forScaleFromCenterAndroid
-                }}/>
-                <Stack.Screen name="AddProject" component={AddProject} options={{
-                    cardStyleInterpolator: CardStyleInterpolators.forScaleFromCenterAndroid
-                }}/>
-                <Stack.Screen name="ViewProjects" component={ViewProjects} options={{
-                    cardStyleInterpolator: CardStyleInterpolators.forScaleFromCenterAndroid
-                }}/>
-                <Stack.Screen name="ProjectDetails" component={ProjectDetails} options={{
-                    cardStyleInterpolator: CardStyleInterpolators.forScaleFromCenterAndroid
-                }}/>
-                <Stack.Screen name="AddMembers" component={AddMembersScreen} options={{
-                    cardStyleInterpolator: CardStyleInterpolators.forScaleFromCenterAndroid
-                }}/>
-                <Stack.Screen name="ChatScreen" component={ChatScreen} options={{
-                    cardStyleInterpolator: CardStyleInterpolators.forScaleFromCenterAndroid
-                }}/>
-                {/* <Stack.Screen name="SidebarNavigation" component={SidebarNavigation} options={{
-                    cardStyleInterpolator: CardStyleInterpolators.forScaleFromCenterAndroid
-                }}/> */}
-                <Stack.Screen name="Settings" component={SettingsScreen} options={{
-                    cardStyleInterpolator: CardStyleInterpolators.forScaleFromCenterAndroid
-                }}/>
+  return (
+    <NavigationContainer>
+      <Stack.Navigator
+        screenOptions={{
+          headerShown: false,
+          cardStyleInterpolator: CardStyleInterpolators.forScaleFromCenterAndroid
+        }}
+      >
 
-            </Stack.Navigator>
-        </NavigationContainer>
-    )
-}
+        {/* 🔹 Auth Flow */}
+        <Stack.Screen name="Splash" component={Splash} />
+        <Stack.Screen name="Login" component={Login} />
+        <Stack.Screen name="Signup" component={Signup} />
+        <Stack.Screen name="OtpVerification" component={OTPVerification} />
+        <Stack.Screen name="Resetpass1" component={Resetpass1} />
+        <Stack.Screen name="Resetpass2" component={Resetpass2} />
+        <Stack.Screen name="Newpass" component={Newpass} />
+        <Stack.Screen name="Updatedpass" component={Updatedpass} />
+
+        {/* 🔹 Profile & Account */}
+        <Stack.Screen name="ProfileScreen" component={ProfileScreen} />
+        <Stack.Screen name="Editacc" component={Editacc} />
+        <Stack.Screen name="Changepass" component={Changepass} />
+
+        {/* 🔹 Main / Dashboard */}
+        <Stack.Screen name="Dashboard" component={Dashboard} />
+        <Stack.Screen name="Notifications" component={Notifications} />
+        <Stack.Screen name="Settings" component={SettingsScreen} />
+
+        {/* 🔹 Projects & Stages */}
+        <Stack.Screen name="ViewProjects" component={ViewProjects} />
+        <Stack.Screen name="AddProject" component={AddProject} />
+        <Stack.Screen name="ProjectDetails" component={ProjectDetails} />
+        <Stack.Screen name="AddMembers" component={AddMembersScreen} />
+        <Stack.Screen name="UpcommingStages" component={UpcommingStages} />
+        <Stack.Screen name="Stagedetails" component={Stagedetails} />
+        <Stack.Screen name="AddStage" component={AddStageScreen} />
+
+        {/* 🔹 Chat */}
+        <Stack.Screen name="Chats" component={Chats} />
+        <Stack.Screen name="ChatScreen" component={ChatScreen} />
+
+      </Stack.Navigator>
+    </NavigationContainer>
+  );
+};
 
 export default AppNavigation;

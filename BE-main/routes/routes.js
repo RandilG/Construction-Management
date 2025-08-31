@@ -1,39 +1,50 @@
 const express = require('express');
 const router = express.Router();
 
-// Import all your existing components
-const userSignup = require('../components/userSignup/userSignup');
-const userSignin = require('../components/userSignin/userSignin');
+// Utils & Middleware
 const { authenticateToken } = require('../utils/authUtils');
-const mailTest = require('../components/test/mailTest');
-const verifyOtp = require('../components/verifyOtp/verifyOtp');
-const ResetPasswordVerification = require('../components/ResetPasswordVerification/ResetPasswordVerification');
-const resetPassword = require('../components/resetPassword/resetPassword');
-const uploadImage = require('../components/uploadImage/uploadImage');
-const getUserById = require('../components/getUserById/getUserById');
-const ProfileController = require('../components/Profile/Profile');
-const settingsController = require('../components/Settings/Settings');
-const changePassword = require('../components/changePassword/changePassword');
-const getUserByEmail = require('../components/getUserByEmail/getUserByEmail');
-const getStages = require('../components/getStages/getStages');
-const getUserProjects = require('../components/getUserProjects/getUserProjects');
-const addNewProject = require('../components/addNewProject/addNewProject');
-const getProjectById = require('../components/getProjectById/getProjectById');
-const getProjectDetails = require('../components/getProjectDetails/getProjectDetails');
-const deleteProject = require('../components/deleteProject/deleteProject');
-const getProjectMessages = require('../components/getProjectMessages/getProjectMessages');
-const createProjectMessage = require('../components/createProjectMessage/createProjectMessage');
-const getProjectMembers = require('../components/getProjectMembers/getProjectMembers');
-const addProjectMembers = require('../components/addProjectMembers/addProjectMembers');
-const searchUsers = require('../components/searchUsers/searchUsers');
-const getAllProjects = require('../components/getAllProjects/getAllProjects');
-
-
-// Import stage controller and upload middleware
-const stagesController = require('../components/stagesController/stagesController');
 const { uploadStageImage } = require('../middleware/uploadMiddleware');
 
-// Existing routes
+// Auth Components
+const userSignup = require('../components/auth/userSignup'); //
+const userSignin = require('../components/auth/userSignin');
+const verifyOtp = require('../components/auth/verifyOtp');
+const ResetPasswordVerification = require('../components/auth/ResetPasswordVerification');
+const resetPassword = require('../components/auth/resetPassword');
+const changePassword = require('../components/auth/changePassword');
+
+// User Components
+const uploadImage = require('../components/user/uploadImage');
+const getUserById = require('../components/user/getUserById');
+const getUserByEmail = require('../components/user/getUserByEmail');
+const ProfileController = require('../components/user/Profile');
+const settingsController = require('../components/user/Settings');
+const searchUsers = require('../components/user/searchUsers');
+
+// Project Components
+const getUserProjects = require('../components/project/getUserProjects');
+const addNewProject = require('../components/project/addNewProject');
+const getProjectById = require('../components/project/getProjectById');
+const getProjectDetails = require('../components/project/getProjectDetails');
+const getAllProjects = require('../components/project/getAllProjects');
+const deleteProject = require('../components/project/deleteProject');
+
+// Project Messages
+const getProjectMessages = require('../components/projectMessages/getProjectMessages');
+const createProjectMessage = require('../components/projectMessages/createProjectMessage');
+
+// Project Members
+const getProjectMembers = require('../components/projectMembers/getProjectMembers');
+const addProjectMembers = require('../components/projectMembers/addProjectMembers');
+
+// Stages
+const stagesController = require('../components/stages/stagesController');
+
+// Test
+const mailTest = require('../components/test/mailTest');
+
+// ================== ROUTES ==================
+
 router.post('/signup', async(req, res) => {
     userSignup(req, res);
 });
